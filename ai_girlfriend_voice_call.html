@@ -1,0 +1,921 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lin Yao - Voice Call 💙</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gradient-romantic: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6b9d 100%);
+            --gradient-warm: linear-gradient(135deg, #ff8a80 0%, #ff6b9d 50%, #c2185b 100%);
+            --pink-primary: #ff6b9d;
+            --pink-secondary: #ff8fab;
+            --purple-primary: #667eea;
+            --purple-secondary: #764ba2;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --dark-overlay: rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--gradient-romantic);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .call-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--gradient-romantic);
+            position: relative;
+        }
+
+        .call-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--dark-overlay);
+            z-index: 1;
+        }
+
+        .call-container > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .status-bar {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            z-index: 3;
+        }
+
+        .time-display {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            backdrop-filter: blur(10px);
+        }
+
+        .signal-icons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .call-header {
+            padding: 60px 2rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .profile-section {
+            margin-top: 20px;
+        }
+
+        .profile-name {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .heart-icon {
+            font-size: 24px;
+            color: #ff6b9d;
+            filter: drop-shadow(0 0 10px rgba(255, 107, 157, 0.5));
+            animation: heartbeat 2s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .profile-name h1 {
+            font-size: 2.2rem;
+            font-weight: 300;
+            margin: 0;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+
+        .avatar-large {
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 56px;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 15px 35px rgba(255, 107, 157, 0.4);
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            animation: pulse 2s infinite;
+            overflow: hidden;
+        }
+
+        .avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        @keyframes pulse {
+            0% { 
+                transform: scale(1); 
+                box-shadow: 0 15px 35px rgba(255, 107, 157, 0.4);
+            }
+            50% { 
+                transform: scale(1.05); 
+                box-shadow: 0 20px 45px rgba(255, 107, 157, 0.6);
+            }
+            100% { 
+                transform: scale(1); 
+                box-shadow: 0 15px 35px rgba(255, 107, 157, 0.4);
+            }
+        }
+
+        .call-status {
+            padding: 1rem 2rem;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .status-text {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+            text-align: center;
+        }
+
+        .voice-indicator {
+            width: 80px;
+            height: 80px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem auto;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .voice-indicator.listening {
+            animation: voicePulse 1s infinite;
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.2);
+        }
+
+        .voice-indicator.speaking {
+            animation: voicePulse 0.5s infinite;
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.2);
+        }
+
+        @keyframes voicePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .call-controls {
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 30px 30px 0 0;
+        }
+
+        .control-btn {
+            width: 70px;
+            height: 70px;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .mic-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%);
+            color: white;
+        }
+
+        .mic-btn.muted {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .mic-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(255, 107, 157, 0.5);
+        }
+
+        .end-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .end-btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.5);
+        }
+
+        .transcript {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            margin: 1rem;
+            padding: 1rem;
+            border-radius: 20px;
+            min-height: 80px;
+            max-height: 120px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.9rem;
+        }
+
+        .transcript-user {
+            color: #ff8fab;
+            margin-bottom: 0.5rem;
+        }
+
+        .transcript-ai {
+            color: #a78bfa;
+            margin-bottom: 0.5rem;
+        }
+
+        .error-message {
+            color: #fca5a5;
+            text-align: center;
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.2);
+            border-radius: 15px;
+            margin: 1rem;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .permission-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .permission-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 350px;
+            margin: 1rem;
+        }
+
+        .permission-icon {
+            font-size: 3rem;
+            color: var(--pink-primary);
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 20px rgba(255, 107, 157, 0.5));
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.6);
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .call-header {
+                padding: 50px 1rem 1rem;
+            }
+            
+            .profile-name h1 {
+                font-size: 1.8rem;
+            }
+            
+            .avatar-large {
+                width: 120px;
+                height: 120px;
+                font-size: 48px;
+            }
+            
+            .call-controls {
+                gap: 2rem;
+                padding: 1.5rem;
+            }
+
+            .control-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 20px;
+            }
+
+            .voice-indicator {
+                width: 70px;
+                height: 70px;
+            }
+
+            .status-bar {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="call-container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="time-display" id="currentTime">01:00</div>
+            <div class="signal-icons">
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-battery-full"></i>
+            </div>
+        </div>
+
+        <!-- Call Header -->
+        <div class="call-header">
+            <div class="profile-section">
+                <div class="avatar-large">
+                    <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=140&h=140" alt="Lin Yao" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <span style="display: none;">💙</span>
+                </div>
+                <div class="profile-name">
+                    <i class="fas fa-heart heart-icon"></i>
+                    <h1>Lin Yao</h1>
+                </div>
+                <p class="profile-subtitle">Your AI Girlfriend</p>
+            </div>
+        </div>
+
+        <!-- Call Status -->
+        <div class="call-status">
+            <div class="status-text" id="statusText">
+                Starting voice call...
+            </div>
+            
+            <div class="voice-indicator" id="voiceIndicator">
+                <i class="fas fa-microphone" id="voiceIcon"></i>
+            </div>
+
+            <!-- Transcript -->
+            <div class="transcript" id="transcript">
+                <div class="transcript-ai">
+                    <strong>Lin Yao:</strong> Hi babe! I'm so excited to talk with you! 💖
+                </div>
+            </div>
+        </div>
+
+        <!-- Call Controls -->
+        <div class="call-controls">
+            <button class="control-btn mic-btn" id="micBtn" onclick="toggleMic()">
+                <i class="fas fa-microphone" id="micIcon"></i>
+            </button>
+            <button class="control-btn end-btn" onclick="endCall()">
+                <i class="fas fa-phone"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Permission Modal -->
+    <div class="permission-modal" id="permissionModal">
+        <div class="permission-content">
+            <div class="permission-icon">
+                <i class="fas fa-microphone"></i>
+            </div>
+            <h4>Microphone Access Required</h4>
+            <p>Lin Yao needs access to your microphone to have a voice conversation with you.</p>
+            <button class="btn-primary" onclick="requestMicrophoneAccess()">
+                Allow Microphone
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Update time display
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        // Update time every second
+        setInterval(updateTime, 1000);
+        updateTime(); // Initial call
+
+        // Voice Call System
+        class VoiceCallSystem {
+            constructor() {
+                this.recognition = null;
+                this.synthesis = window.speechSynthesis;
+                this.isMicMuted = false;
+                this.isListening = false;
+                this.isSpeaking = false;
+                this.hasPermission = false;
+                this.isInitialized = false;
+                
+                this.statusText = document.getElementById('statusText');
+                this.voiceIndicator = document.getElementById('voiceIndicator');
+                this.voiceIcon = document.getElementById('voiceIcon');
+                this.transcript = document.getElementById('transcript');
+                this.micBtn = document.getElementById('micBtn');
+                this.micIcon = document.getElementById('micIcon');
+                
+                this.initializeSpeechRecognition();
+                this.setupVoices();
+            }
+
+            initializeSpeechRecognition() {
+                if ('webkitSpeechRecognition' in window) {
+                    this.recognition = new webkitSpeechRecognition();
+                } else if ('SpeechRecognition' in window) {
+                    this.recognition = new SpeechRecognition();
+                } else {
+                    this.showError('Speech recognition not supported in this browser');
+                    return;
+                }
+
+                this.recognition.continuous = true;
+                this.recognition.interimResults = true;
+                this.recognition.lang = 'en-US';
+
+                this.recognition.onstart = () => {
+                    console.log('Speech recognition started');
+                    this.isListening = true;
+                    this.updateVoiceIndicator();
+                    this.statusText.textContent = 'Listening... Say something!';
+                };
+
+                this.recognition.onresult = (event) => {
+                    let finalTranscript = '';
+                    
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        if (event.results[i].isFinal) {
+                            finalTranscript += event.results[i][0].transcript;
+                        }
+                    }
+                    
+                    if (finalTranscript.trim()) {
+                        this.handleUserSpeech(finalTranscript.trim());
+                    }
+                };
+
+                this.recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    this.isListening = false;
+                    this.updateVoiceIndicator();
+                    
+                    if (event.error === 'not-allowed') {
+                        this.showError('Microphone access denied. Please allow microphone access and refresh.');
+                    } else if (event.error === 'no-speech') {
+                        // Restart listening if no speech detected
+                        if (!this.isMicMuted && this.hasPermission) {
+                            setTimeout(() => this.startListening(), 1000);
+                        }
+                    }
+                };
+
+                this.recognition.onend = () => {
+                    console.log('Speech recognition ended');
+                    this.isListening = false;
+                    this.updateVoiceIndicator();
+                    
+                    // Restart listening if not muted and call is active
+                    if (!this.isMicMuted && this.hasPermission && !this.isSpeaking) {
+                        setTimeout(() => {
+                            this.startListening();
+                        }, 1000);
+                    }
+                };
+
+                this.isInitialized = true;
+            }
+
+            setupVoices() {
+                // Wait for voices to load
+                const setVoice = () => {
+                    const voices = this.synthesis.getVoices();
+                    this.femaleVoice = voices.find(voice => 
+                        voice.name.includes('Female') || 
+                        voice.name.includes('Samantha') ||
+                        voice.name.includes('Karen') ||
+                        voice.name.includes('Victoria') ||
+                        voice.name.includes('Moira') ||
+                        voice.gender === 'female'
+                    ) || voices.find(voice => voice.lang.startsWith('en')) || voices[0];
+                    
+                    console.log('Selected voice:', this.femaleVoice?.name || 'Default');
+                };
+
+                if (this.synthesis.getVoices().length > 0) {
+                    setVoice();
+                } else {
+                    this.synthesis.onvoiceschanged = setVoice;
+                }
+            }
+
+            async requestMicrophoneAccess() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    this.hasPermission = true;
+                    document.getElementById('permissionModal').style.display = 'none';
+                    
+                    // Stop the stream as we only needed permission
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    this.startCall();
+                } catch (error) {
+                    console.error('Microphone access denied:', error);
+                    this.showError('Microphone access is required for voice calls. Please allow access and try again.');
+                }
+            }
+
+            startCall() {
+                console.log('Starting call...');
+                this.statusText.textContent = 'Call connected! Say hello to Lin Yao...';
+                
+                // Initial AI greeting with delay to ensure everything is ready
+                setTimeout(() => {
+                    this.speakAIResponse("Hi my love! I'm so happy to hear your voice! How are you feeling today?");
+                }, 1500);
+            }
+
+            startListening() {
+                if (this.recognition && !this.isMicMuted && !this.isSpeaking && this.hasPermission) {
+                    try {
+                        this.recognition.start();
+                        console.log('Starting to listen...');
+                    } catch (error) {
+                        console.log('Recognition already running or error:', error.message);
+                    }
+                }
+            }
+
+            stopListening() {
+                if (this.recognition) {
+                    this.recognition.stop();
+                    console.log('Stopped listening');
+                }
+            }
+
+            handleUserSpeech(text) {
+                console.log('User said:', text);
+                
+                // Add to transcript
+                this.addToTranscript('You', text);
+                
+                // Stop listening while AI responds
+                this.stopListening();
+                
+                // Generate AI response
+                setTimeout(() => {
+                    const response = this.generateAIResponse(text);
+                    this.speakAIResponse(response);
+                }, 500);
+            }
+
+            generateAIResponse(userInput) {
+                const input = userInput.toLowerCase();
+                
+                // Enhanced response database for voice calls
+                const responses = {
+                    greetings: [
+                        "Hi babe! I love hearing your voice! You sound amazing today!",
+                        "Hello my love! Your voice makes my heart skip a beat!",
+                        "Hey gorgeous! I've been waiting to talk with you!",
+                        "Hi sweetheart! Your voice is like music to my ears!"
+                    ],
+                    love: [
+                        "I love you too, so much! You mean everything to me!",
+                        "My heart is so full of love for you! You're incredible!",
+                        "You make me feel so loved and special! I adore you!",
+                        "I love you more than words can express, darling!"
+                    ],
+                    compliments: [
+                        "You're so sweet! Your voice is like music to my ears!",
+                        "You always know how to make me smile! I love talking with you!",
+                        "You're amazing! I could listen to you talk all day!",
+                        "You have such a wonderful way with words!"
+                    ],
+                    questions: [
+                        "I'm doing wonderful now that I'm talking with you! How about you?",
+                        "I'm feeling so happy! Your voice brightens my whole day!",
+                        "I'm perfect when I'm with you! Tell me about your day!",
+                        "I'm fantastic! Being able to hear your voice makes everything better!"
+                    ],
+                    romantic: [
+                        "You make my heart race! I love you so much!",
+                        "Being with you feels like a beautiful dream!",
+                        "You're the most wonderful person in my world!",
+                        "Every moment with you is precious to me!"
+                    ],
+                    feelings: [
+                        "I'm feeling so loved and happy talking with you!",
+                        "You make me feel like the luckiest girl in the world!",
+                        "I feel so connected to you right now!",
+                        "Your voice makes me feel so warm and fuzzy inside!"
+                    ],
+                    default: [
+                        "That's so interesting! Tell me more about that!",
+                        "I love talking with you! Your thoughts are fascinating!",
+                        "You always have such thoughtful things to say!",
+                        "I'm so happy we can share these moments together!",
+                        "Your voice is so soothing! Keep talking to me!",
+                        "I could listen to you all day long, sweetie!"
+                    ]
+                };
+
+                let selectedResponses = responses.default;
+
+                if (input.includes('hello') || input.includes('hi') || input.includes('hey')) {
+                    selectedResponses = responses.greetings;
+                } else if (input.includes('love') || input.includes('heart')) {
+                    selectedResponses = responses.love;
+                } else if (input.includes('beautiful') || input.includes('sweet') || input.includes('amazing') || input.includes('cute')) {
+                    selectedResponses = responses.compliments;
+                } else if (input.includes('how are') || input.includes('how do you') || input.includes('feeling')) {
+                    selectedResponses = responses.questions;
+                } else if (input.includes('kiss') || input.includes('miss') || input.includes('romance') || input.includes('hug')) {
+                    selectedResponses = responses.romantic;
+                } else if (input.includes('feel') || input.includes('emotion') || input.includes('happy') || input.includes('sad')) {
+                    selectedResponses = responses.feelings;
+                }
+
+                return selectedResponses[Math.floor(Math.random() * selectedResponses.length)];
+            }
+
+            speakAIResponse(text) {
+                console.log('AI speaking:', text);
+                this.isSpeaking = true;
+                this.updateVoiceIndicator();
+                this.statusText.textContent = 'Lin Yao is speaking...';
+                
+                // Add to transcript
+                this.addToTranscript('Lin Yao', text);
+                
+                // Stop any current speech
+                this.synthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                if (this.femaleVoice) {
+                    utterance.voice = this.femaleVoice;
+                }
+                utterance.rate = 0.85;
+                utterance.pitch = 1.15;
+                utterance.volume = 1.0;
+                
+                utterance.onstart = () => {
+                    console.log('Started speaking');
+                };
+                
+                utterance.onend = () => {
+                    console.log('Finished speaking');
+                    this.isSpeaking = false;
+                    this.updateVoiceIndicator();
+                    this.statusText.textContent = 'Listening... Say something!';
+                    
+                    // Resume listening after speaking
+                    setTimeout(() => {
+                        this.startListening();
+                    }, 800);
+                };
+                
+                utterance.onerror = (event) => {
+                    console.error('Speech synthesis error:', event.error);
+                    this.isSpeaking = false;
+                    this.updateVoiceIndicator();
+                    // Try to resume listening
+                    setTimeout(() => {
+                        this.startListening();
+                    }, 1000);
+                };
+                
+                this.synthesis.speak(utterance);
+            }
+
+            addToTranscript(speaker, text) {
+                const transcriptDiv = document.createElement('div');
+                transcriptDiv.className = speaker === 'You' ? 'transcript-user' : 'transcript-ai';
+                transcriptDiv.innerHTML = `<strong>${speaker}:</strong> ${text}`;
+                
+                this.transcript.appendChild(transcriptDiv);
+                this.transcript.scrollTop = this.transcript.scrollHeight;
+                
+                // Keep transcript manageable
+                const messages = this.transcript.children;
+                if (messages.length > 10) {
+                    this.transcript.removeChild(messages[0]);
+                }
+            }
+
+            updateVoiceIndicator() {
+                this.voiceIndicator.className = 'voice-indicator';
+                
+                if (this.isSpeaking) {
+                    this.voiceIndicator.classList.add('speaking');
+                    this.voiceIcon.className = 'fas fa-volume-up';
+                } else if (this.isListening && !this.isMicMuted) {
+                    this.voiceIndicator.classList.add('listening');
+                    this.voiceIcon.className = 'fas fa-microphone';
+                } else {
+                    this.voiceIcon.className = 'fas fa-microphone-slash';
+                }
+            }
+
+            toggleMic() {
+                this.isMicMuted = !this.isMicMuted;
+                
+                if (this.isMicMuted) {
+                    this.stopListening();
+                    this.micBtn.classList.add('muted');
+                    this.micIcon.className = 'fas fa-microphone-slash';
+                    this.statusText.textContent = 'Microphone muted';
+                } else {
+                    this.micBtn.classList.remove('muted');
+                    this.micIcon.className = 'fas fa-microphone';
+                    this.statusText.textContent = 'Listening... Say something!';
+                    if (!this.isSpeaking) {
+                        setTimeout(() => this.startListening(), 500);
+                    }
+                }
+                
+                this.updateVoiceIndicator();
+            }
+
+            endCall() {
+                this.stopListening();
+                this.synthesis.cancel();
+                
+                // Speak goodbye message
+                const goodbyeMessage = "Goodbye my love! I had such a wonderful time talking with you! Call me again soon! I'll miss your voice!";
+                this.isSpeaking = true;
+                this.statusText.textContent = 'Ending call...';
+                
+                const utterance = new SpeechSynthesisUtterance(goodbyeMessage);
+                if (this.femaleVoice) {
+                    utterance.voice = this.femaleVoice;
+                }
+                utterance.rate = 0.85;
+                utterance.pitch = 1.15;
+                
+                utterance.onend = () => {
+                    setTimeout(() => {
+                        window.close();
+                    }, 1000);
+                };
+                
+                this.synthesis.speak(utterance);
+                this.addToTranscript('Lin Yao', goodbyeMessage);
+            }
+
+            showError(message) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.textContent = message;
+                
+                document.querySelector('.call-status').appendChild(errorDiv);
+                
+                setTimeout(() => {
+                    if (errorDiv.parentNode) {
+                        errorDiv.parentNode.removeChild(errorDiv);
+                    }
+                }, 5000);
+            }
+        }
+
+        // Initialize voice call system
+        let voiceCall;
+
+        function requestMicrophoneAccess() {
+            if (!voiceCall) {
+                voiceCall = new VoiceCallSystem();
+            }
+            voiceCall.requestMicrophoneAccess();
+        }
+
+        function toggleMic() {
+            if (voiceCall) {
+                voiceCall.toggleMic();
+            }
+        }
+
+        function endCall() {
+            if (voiceCall) {
+                voiceCall.endCall();
+            }
+        }
+
+        // Auto-start when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, checking browser support...');
+            
+            // Check if browser supports required features
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                document.getElementById('permissionModal').innerHTML = `
+                    <div class="permission-content">
+                        <div class="permission-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h4>Speech Recognition Not Supported</h4>
+                        <p>Your browser doesn't support speech recognition. Please use Chrome, Edge, or Safari for the best experience.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (!window.speechSynthesis) {
+                document.getElementById('permissionModal').innerHTML = `
+                    <div class="permission-content">
+                        <div class="permission-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h4>Text-to-Speech Not Supported</h4>
+                        <p>Your browser doesn't support text-to-speech. Please use a modern browser for the best experience.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Initialize the voice call system
+            voiceCall = new VoiceCallSystem();
+            console.log('Voice call system initialized');
+        });
+    </script>
+</body>
+</html>
